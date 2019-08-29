@@ -45,6 +45,7 @@ public class ComponentLookupAnnotationSystem extends BaseSystem {
 	final Field field, final BaseSystem system, final ObjectIntMap map
     ) {
 	try {
+	    field.setAccessible(true);
 	    field.set(system, map);
 	} catch (IllegalArgumentException | IllegalAccessException e) {
 	    throw new IllegalArgumentException(
