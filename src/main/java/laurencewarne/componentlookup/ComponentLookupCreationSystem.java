@@ -13,6 +13,7 @@ import com.artemis.utils.IntBagIterator;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
+@SuppressWarnings("unchecked")
 public class ComponentLookupCreationSystem extends BaseSystem {
 
     @Override
@@ -20,23 +21,41 @@ public class ComponentLookupCreationSystem extends BaseSystem {
 	
     }
 
-    public <C extends Component, T> ObjectIntMap<T> createLookup(
+    <C extends Component, T> ObjectIntMap<T> createLookup(
 	final String fieldName,
 	final Class<C> componentClass,
 	final Class<T> fieldClass
     ) throws NoSuchFieldException, SecurityException {
 	final Field field = componentClass.getField(fieldName);
-	if (field.getType().equals(fieldClass)) {
-	    final LookupSubscription<C, T> sub = new LookupSubscription<>(
-		world.getMapper(componentClass), null
+	field.setAccessible(true);
+	if (!field.getType().equals(fieldClass)) {
+	    throw new IllegalArgumentException(
+		"Field type is: " + field.getType() + " but expected type " +
+		fieldClass
 	    );
-	    world.getAspectSubscriptionManager().get(Aspect.all(componentClass))
-		.addSubscriptionListener(sub);
-	    return sub.getLookup();
 	}
-	else {
-	    throw new IllegalArgumentException();
-	}
+	return createLookup(field, componentClass, fieldClass);
+    }
+
+    <C extends Component, T> ObjectIntMap<T> createLookup(
+	final Field field,
+	final Class<C> componentClass,
+	final Class<T> fieldClass
+    ) {
+	final LookupSubscription<C, T> sub = new LookupSubscription<>(
+	    world.getMapper(componentClass),
+	    component -> {
+		try {
+		    return (T) field.get(component);
+		} catch (IllegalArgumentException | IllegalAccessException | ClassCastException e) {  // shouldn't happen
+		    return null;
+		}
+	    }
+	);
+	// Subscribe to aspect via world object
+	world.getAspectSubscriptionManager().get(Aspect.all(componentClass))
+	    .addSubscriptionListener(sub);
+	return sub.getLookup();
     }
 
     private static class LookupSubscription<C extends Component, T>
