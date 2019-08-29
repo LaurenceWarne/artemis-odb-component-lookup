@@ -3,6 +3,7 @@ package laurencewarne.componentlookup;
 import java.lang.reflect.Field;
 import java.util.function.Function;
 
+import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.Component;
 import com.artemis.ComponentMapper;
@@ -26,19 +27,26 @@ public class ComponentLookupCreationSystem extends BaseSystem {
     ) throws NoSuchFieldException, SecurityException {
 	final Field field = componentClass.getField(fieldName);
 	if (field.getType().equals(fieldClass)) {
-	    return new ObjectIntMap<>();
+	    final LookupSubscription<C, T> sub = new LookupSubscription<>(
+		world.getMapper(componentClass), null
+	    );
+	    world.getAspectSubscriptionManager().get(Aspect.all(componentClass))
+		.addSubscriptionListener(sub);
+	    return sub.getLookup();
 	}
-
-	return null;
+	else {
+	    throw new IllegalArgumentException();
+	}
     }
 
     private static class LookupSubscription<C extends Component, T>
 	implements SubscriptionListener {
 
 	private final ComponentMapper<C> m;
+	/** Gets the lookup field from a component.*/
 	private final Function<C, T> retrievalFunction;
-	private final ObjectIntMap<C> lookup;
-	private final IntMap<C> reverseLookup;
+	private final ObjectIntMap<T> lookup;
+	private final IntMap<T> reverseLookup;
 
 	public LookupSubscription(
 	    final ComponentMapper<C> m,
@@ -50,18 +58,30 @@ public class ComponentLookupCreationSystem extends BaseSystem {
 	    this.reverseLookup = new IntMap<>();
 	}
 
-	private ObjectIntMap<C> getLookup() {
+	private ObjectIntMap<T> getLookup() {
 	    return lookup;
 	}
 
 	@Override
 	public void inserted(IntBag entities) {
-
+	    final IntBagIterator it = new IntBagIterator(entities);
+	    while (it.hasNext()) {
+		final int entity = it.next();
+		final T key = retrievalFunction.apply(m.get(entity));
+		lookup.put(key, entity);
+		reverseLookup.put(entity, key);
+	    }
 	}
 
 	@Override
 	public void removed(IntBag entities) {
-			
+	    final IntBagIterator it = new IntBagIterator(entities);
+	    while (it.hasNext()) {
+		final int entity = it.next();
+		final T key = reverseLookup.get(entity);
+		lookup.remove(key, -1);
+		reverseLookup.remove(entity);
+	    }
 	}
 	
     }
