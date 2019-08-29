@@ -26,7 +26,7 @@ public class ComponentLookupCreationSystem extends BaseSystem {
 	final Class<C> componentClass,
 	final Class<T> fieldClass
     ) throws NoSuchFieldException, SecurityException {
-	final Field field = componentClass.getField(fieldName);
+	final Field field = componentClass.getDeclaredField(fieldName);
 	field.setAccessible(true);
 	if (!field.getType().equals(fieldClass)) {
 	    throw new IllegalArgumentException(
