@@ -58,5 +58,12 @@ public class ComponentLookupAnnotationSystemTest {
 	createWorld();
 	assertEquals(new ObjectIntMap<String>(), testSys.getLookup());
     }
-    
+
+    @Test(expected=IllegalStateException.class)
+    public void testSystemThrowsExceptionOnInvalidField() {
+	SystemD testSys = new SystemD();
+	setup.with(testSys);
+	createWorld();
+    }
+
 }

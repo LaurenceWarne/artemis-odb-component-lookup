@@ -144,5 +144,4 @@ public class ComponentLookupCreationSystemTest {
 	}
 	Assert.fail();
     }
-
 }

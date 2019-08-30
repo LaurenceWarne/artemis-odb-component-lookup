@@ -25,6 +25,3 @@ public class SystemC extends BaseSystem {
 	
     }
 }
-
-
-

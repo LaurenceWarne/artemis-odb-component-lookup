@@ -16,8 +16,8 @@ public class LookupSubscription<C extends Component, T>
     private final ComponentMapper<C> m;
     /** Gets the lookup field from a component.*/
     private final Function<C, T> retrievalFunction;
-    private final ObjectIntMap<T> lookup;
-    private final IntMap<T> reverseLookup;
+    private final ObjectIntMap<T> lookup = new ObjectIntMap<>();
+    private final IntMap<T> reverseLookup = new IntMap<>();
 
     public LookupSubscription(
 	final ComponentMapper<C> m,
@@ -25,8 +25,6 @@ public class LookupSubscription<C extends Component, T>
     ) {
 	this.m = m;
 	this.retrievalFunction = retrievalFunction;
-	this.lookup = new ObjectIntMap<>();
-	this.reverseLookup = new IntMap<>();
     }
 
     public ObjectIntMap<T> getLookup() {
