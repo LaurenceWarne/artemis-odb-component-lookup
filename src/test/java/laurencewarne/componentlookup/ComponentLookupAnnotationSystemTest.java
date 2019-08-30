@@ -56,7 +56,7 @@ public class ComponentLookupAnnotationSystemTest {
 	SystemB testSys = new SystemB();
 	setup.with(testSys);
 	createWorld();
-	assertEquals(new ObjectIntMap<Integer>(), testSys.getLookup());
+	assertEquals(new ObjectIntMap<String>(), testSys.getLookup());
     }
     
 }

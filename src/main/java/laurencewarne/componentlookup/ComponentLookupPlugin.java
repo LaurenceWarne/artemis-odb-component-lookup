@@ -6,7 +6,10 @@ import com.artemis.WorldConfigurationBuilder;
 public class ComponentLookupPlugin implements ArtemisPlugin {
 
     @Override
-    public void setup(final WorldConfigurationBuilder b) {
-	
+    public void setup(final WorldConfigurationBuilder setup) {
+	setup.with(
+	    new ComponentLookupAnnotationSystem(),
+	    new ComponentLookupCreationSystem()
+	);
     }
 }

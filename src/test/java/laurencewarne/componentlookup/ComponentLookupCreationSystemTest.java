@@ -87,5 +87,62 @@ public class ComponentLookupCreationSystemTest {
 	assertTrue(map.containsKey(c2.name));
 	assertEquals(id2, map.get(c2.name, -1));
     }
-    
+
+    @Test
+    public void testLookupReturnsSameInstanceOnSameArguments() {
+	ObjectIntMap<String> mapA = null;
+	try {
+	    mapA = sys.createLookup("name", ComponentA.class, String.class);
+	} catch (NoSuchFieldException | SecurityException e) {
+	    Assert.fail();
+	}
+	ObjectIntMap<String> mapB = null;
+	try {
+	    mapB = sys.createLookup("name", ComponentA.class, String.class);
+	} catch (NoSuchFieldException | SecurityException e) {
+	    Assert.fail();
+	}
+	assertTrue(mapA == mapB);
+    }
+
+    @Test
+    public void testLookupReturnsDifferentInstanceOnDifferentArguments() {
+	ObjectIntMap<String> mapA = null;
+	try {
+	    mapA = sys.createLookup("name", ComponentA.class, String.class);
+	} catch (NoSuchFieldException | SecurityException e) {
+	    Assert.fail();
+	}
+	ObjectIntMap<String> mapB = null;
+	try {
+	    mapB = sys.createLookup("birthday", ComponentA.class, String.class);
+	} catch (NoSuchFieldException | SecurityException e) {
+	    Assert.fail();
+	}
+	assertFalse(mapA == mapB);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testExceptionThrownOnFieldAndFieldClassTypeMismatch() {
+	ObjectIntMap<Integer> mapA = null;
+	try {
+	    mapA = sys.createLookup("name", ComponentA.class, Integer.class);
+	} catch (NoSuchFieldException | SecurityException e) {
+	    Assert.fail();
+	}
+    }
+
+    @Test
+    public void testNoSuchFieldExceptionThrownOnInvalidField() {
+	ObjectIntMap<Integer> mapA = null;
+	try {
+	    mapA = sys.createLookup("notAField", ComponentA.class, Integer.class);
+	} catch (SecurityException e) {
+	    Assert.fail();
+	} catch (NoSuchFieldException e) {
+	    return;
+	}
+	Assert.fail();
+    }
+
 }

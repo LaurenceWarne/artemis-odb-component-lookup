@@ -6,9 +6,13 @@ import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.Component;
 import com.badlogic.gdx.utils.ObjectIntMap;
+import com.badlogic.gdx.utils.ObjectMap;
 
 @SuppressWarnings("unchecked")
 public class ComponentLookupCreationSystem extends BaseSystem {
+
+    private final ObjectMap<LookupKey, ObjectIntMap<?>> lookupCache =
+	new ObjectMap<>();
 
     @Override
     public void processSystem() {
@@ -24,11 +28,21 @@ public class ComponentLookupCreationSystem extends BaseSystem {
 	field.setAccessible(true);
 	if (!field.getType().equals(fieldClass)) {
 	    throw new IllegalArgumentException(
-		"Field type is: " + field.getType() + " but expected type " +
-		fieldClass
+		"Error for field: '" + fieldName + "', field type is: " +
+		field.getType() + " but expected type: " + fieldClass
 	    );
 	}
-	return createLookup(field, componentClass, fieldClass);
+	final LookupKey key = new LookupKey(componentClass, fieldName);
+	if (lookupCache.containsKey(key)) {
+	    return (ObjectIntMap<T>) lookupCache.get(key);
+	}
+	else {
+	    final ObjectIntMap<T> map = createLookup(
+		field, componentClass, fieldClass
+	    );
+	    lookupCache.put(key, map);
+	    return map;
+	}
     }
 
     <C extends Component, T> ObjectIntMap<T> createLookup(
@@ -42,7 +56,7 @@ public class ComponentLookupCreationSystem extends BaseSystem {
 		try {
 		    return (T) field.get(component);
 		} catch (IllegalArgumentException | IllegalAccessException | ClassCastException e) {  // shouldn't happen
-		    return null;
+		    throw new IllegalStateException();
 		}
 	    }
 	);

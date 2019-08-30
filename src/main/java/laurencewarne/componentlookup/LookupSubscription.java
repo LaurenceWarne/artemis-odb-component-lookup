@@ -29,7 +29,7 @@ public class LookupSubscription<C extends Component, T>
 	this.reverseLookup = new IntMap<>();
     }
 
-    private ObjectIntMap<T> getLookup() {
+    public ObjectIntMap<T> getLookup() {
 	return lookup;
     }
 

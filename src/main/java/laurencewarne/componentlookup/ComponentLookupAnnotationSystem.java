@@ -24,11 +24,12 @@ public class ComponentLookupAnnotationSystem extends BaseSystem {
 	    final FieldLookup lookup = field.getAnnotation(FieldLookup.class);
 	    if (lookup != null) {
 		final ObjectIntMap map;
+		final String targetFieldName = lookup.componentField();
 		try {
 		    map = lookupCreatorSystem.createLookup(
-			lookup.componentField(),
+			targetFieldName,
 			lookup.targetClass(),
-			field.getType()
+			lookup.targetClass().getDeclaredField(targetFieldName).getType()
 		    );
 		} catch (NoSuchFieldException | SecurityException e) {
 		    throw new IllegalStateException(
