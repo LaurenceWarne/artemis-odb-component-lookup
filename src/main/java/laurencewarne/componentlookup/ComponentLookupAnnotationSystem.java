@@ -23,23 +23,31 @@ public class ComponentLookupAnnotationSystem extends BaseSystem {
 	for (Field field : system.getClass().getDeclaredFields()) {
 	    final FieldLookup lookup = field.getAnnotation(FieldLookup.class);
 	    if (lookup != null) {
-		final ObjectIntMap map;
-		final String targetFieldName = lookup.componentField();
-		try {
-		    map = lookupCreatorSystem.createLookup(
-			targetFieldName,
-			lookup.targetClass(),
-			lookup.targetClass().getDeclaredField(targetFieldName).getType()
-		    );
-		} catch (NoSuchFieldException | SecurityException e) {
-		    throw new IllegalStateException(
-			"Could not find or access field: " + e.getMessage()
-		    );
-		}
+		final ObjectIntMap lookupMap = getLookupForField(lookup);
 		// inject map into field
-		injectMapIntoSystem(field, system, map);
+		injectMapIntoSystem(field, system, lookupMap);
 	    }
 	}
+    }
+
+    private ObjectIntMap<?> getLookupForField(final FieldLookup lookup) {
+	if (lookup == null) {
+	    throw new IllegalArgumentException("lookup cannot be null!");
+	}
+	final ObjectIntMap<?> map;
+	final String targetFieldName = lookup.componentField();
+	try {
+	    map = lookupCreatorSystem.createLookup(
+		targetFieldName,
+		lookup.targetClass(),
+		lookup.targetClass().getDeclaredField(targetFieldName).getType()
+	    );
+	} catch (NoSuchFieldException | SecurityException e) {
+	    throw new IllegalStateException(
+		"Could not find or access field: " + e.getMessage()
+	    );
+	}
+	return map;
     }
 
     private void injectMapIntoSystem(
