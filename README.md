@@ -33,7 +33,7 @@ public class MonsterSpawningSystem extends IteratingSystem {
 
 	// Injected on world intialization
 	@FieldLookup(component=MonsterTemplate.class, field="name")
-	private IntMap<String> templateLookup;
+	private ObjectIntMap<String> templateLookup;
 
     @Override
     public void process(int id) {
@@ -52,7 +52,7 @@ public class MonsterSpawningSystem extends IteratingSystem {
 ```groovy
 allprojects {
     repositories {
-    ...
+        ...
         maven { url 'https://jitpack.io' }
     }
 }

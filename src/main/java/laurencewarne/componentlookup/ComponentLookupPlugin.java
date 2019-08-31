@@ -8,8 +8,12 @@ public class ComponentLookupPlugin implements ArtemisPlugin {
     @Override
     public void setup(final WorldConfigurationBuilder setup) {
 	setup.with(
-	    new ComponentLookupAnnotationSystem(),
+	    WorldConfigurationBuilder.Priority.HIGH,
 	    new ComponentLookupCreationSystem()
+	);
+	setup.with(
+	    WorldConfigurationBuilder.Priority.HIGH -1,	    
+	    new ComponentLookupAnnotationSystem()
 	);
     }
 }
