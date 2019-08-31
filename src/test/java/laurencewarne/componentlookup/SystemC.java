@@ -7,9 +7,9 @@ import laurencewarne.componentlookup.annotations.FieldLookup;
 
 public class SystemC extends BaseSystem {
 
-    @FieldLookup(targetClass=ComponentA.class, componentField="birthday")
+    @FieldLookup(component=ComponentA.class, field="birthday")
     private ObjectIntMap<String> bdayLookup;
-    @FieldLookup(targetClass=ComponentA.class, componentField="age")
+    @FieldLookup(component=ComponentA.class, field="age")
     private ObjectIntMap<Integer> ageLookup;
 
     public ObjectIntMap<String> getBdayLookup() {

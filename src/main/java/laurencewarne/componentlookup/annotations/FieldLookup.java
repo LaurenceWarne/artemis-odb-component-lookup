@@ -10,7 +10,7 @@ import com.artemis.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FieldLookup {
-    Class<? extends Component> targetClass();
-    String componentField();
+    Class<? extends Component> component();
+    String field();
 }
 

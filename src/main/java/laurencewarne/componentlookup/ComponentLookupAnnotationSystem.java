@@ -35,12 +35,12 @@ public class ComponentLookupAnnotationSystem extends BaseSystem {
 	    throw new IllegalArgumentException("lookup cannot be null!");
 	}
 	final ObjectIntMap<?> map;
-	final String targetFieldName = lookup.componentField();
+	final String targetFieldName = lookup.field();
 	try {
 	    map = lookupCreatorSystem.createLookup(
 		targetFieldName,
-		lookup.targetClass(),
-		lookup.targetClass().getDeclaredField(targetFieldName).getType()
+		lookup.component(),
+		lookup.component().getDeclaredField(targetFieldName).getType()
 	    );
 	} catch (NoSuchFieldException | SecurityException e) {
 	    throw new IllegalStateException(

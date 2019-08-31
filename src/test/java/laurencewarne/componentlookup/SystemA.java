@@ -7,7 +7,7 @@ import laurencewarne.componentlookup.annotations.FieldLookup;
 
 public class SystemA extends BaseSystem {
 
-    @FieldLookup(targetClass=ComponentA.class, componentField="name")
+    @FieldLookup(component=ComponentA.class, field="name")
     public ObjectIntMap<String> lookup;
 
     @Override
