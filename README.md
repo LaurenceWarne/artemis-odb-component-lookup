@@ -22,7 +22,7 @@ public class MonsterTemplate extends Component {
 }
 ```
 
-Then we can use the ```@FieldLookup``` annotation to obtain player components from their name:
+Then we can use the ```@FieldLookup``` annotation to obtain MonsterTemplate components from their name:
 
 ```java
 @All(Spawn.class)
@@ -45,6 +45,8 @@ public class MonsterSpawningSystem extends IteratingSystem {
 }
 ```
 
+And so we can obtain components via unique (and immutable) fields rather than just ids.
+
 ## Getting Started
 
 ### Gradle
@@ -58,6 +60,6 @@ allprojects {
 }
 
 dependencies {
-    implementation "com.github.laurencewarne:artemis-odb-component-lookup:-SNAPSHOT"
+    implementation 'com.github.LaurenceWarne:artemis-odb-component-lookup:v1.0'
 }
 ```
